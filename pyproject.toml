@@ -1,0 +1,15 @@
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "C", "N", "I"]
+ignore = ["E203"]
+[tool.ruff.per-file-ignores]
+"scripts/*" = ["E501", "C901"]
+"tests/*" = ["E402"]
+"backend/adif_normalizer.py" = ["E501", "C901"]
