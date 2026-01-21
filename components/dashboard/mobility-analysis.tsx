@@ -37,7 +37,7 @@ export default function MobilityAnalysis() {
   }
 
   // Filter and clean state data - remove invalid entries
-  const rawStateData = data?.stateDistribution?.states || []
+  const rawStateData = data?.stateDistribution || []
   const stateData = rawStateData
     .filter((s: any) => VALID_REGIONS.has(s.state))
     .slice(0, 10)

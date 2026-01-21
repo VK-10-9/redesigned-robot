@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import DashboardNav from "@/components/common/nav"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -154,47 +153,23 @@ export default function EnhancedStateAnalytics() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <DashboardNav />
-        <main className="container mx-auto px-4 py-8">
-          <div className="space-y-6 animate-pulse">
-            <div className="h-8 bg-gray-200 rounded-lg w-1/3"></div>
-            <div className="h-96 bg-gray-200 rounded-lg"></div>
-          </div>
-        </main>
+      <div className="space-y-6 animate-pulse">
+        <div className="h-8 bg-muted rounded-lg w-1/3"></div>
+        <div className="h-96 bg-muted rounded-lg"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardNav />
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted border border-border rounded-full text-sm font-medium mb-6">
-              <svg className="w-4 h-4 text-primary-lavender" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              <span className="text-primary-lavender font-semibold">State Analytics</span>
-            </div>
-            <h1 className="text-4xl font-bold text-gradient mb-2">
-              STATES
-            </h1>
-            <div className="w-24 h-1 bg-primary-lavender rounded-full mx-auto mb-4"></div>
-            <p className="text-muted-foreground">
-              Comprehensive enrollment analytics and demographic insights by state
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Badge variant="secondary" className="bg-muted text-muted-foreground">
-              {allStatesData.length} States Available
-            </Badge>
-          </div>
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <Badge variant="secondary" className="bg-muted text-muted-foreground">
+          {allStatesData.length} States Available
+        </Badge>
+      </div>
 
-          {/* State Selector */}
-          <Card className="bg-primary-lavender/10 border-primary-lavender/20">
+      {/* State Selector */}
+      <Card className="bg-primary/10 border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <span className="text-2xl">🗺️</span>
@@ -487,7 +462,5 @@ export default function EnhancedStateAnalytics() {
             </>
           )}
         </div>
-      </main>
-    </div>
   )
 }

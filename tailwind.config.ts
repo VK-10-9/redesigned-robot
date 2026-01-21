@@ -65,6 +65,8 @@ const config: Config = {
   			'primary-lavender': '#94ABE8',
   			'primary-lavender-light': '#A8BBEC',
   			'primary-lavender-dark': '#7A8FD4',
+  			'primary-dark': '#7A8FD4',
+  			'primary-light': '#A8BBEC',
   			'accent-blue': '#3B82F6',
   			// Legacy button design system colors
   			main: 'var(--main)',
@@ -84,7 +86,10 @@ const config: Config = {
   			base: '5px'
   		},
   		boxShadow: {
-  			shadow: 'var(--shadow)'
+  			shadow: 'var(--shadow)',
+  			'3d': '0 4px 14px rgba(148, 171, 232, 0.25), 0 2px 6px rgba(148, 171, 232, 0.15)',
+  			'3d-hover': '0 6px 20px rgba(148, 171, 232, 0.35), 0 4px 10px rgba(148, 171, 232, 0.25)',
+  			'3d-sm': '0 2px 8px rgba(148, 171, 232, 0.2)',
   		},
   		translate: {
   			boxShadowX: '4px',

@@ -51,12 +51,24 @@ export function useDashboardData() {
         console.log('Fetching dashboard data from:', API_BASE)
         
         // Fetch all data in parallel
-        const [overviewRes, timelineRes, statesRes, demographicsRes] = await Promise.all([
-          fetch(`${API_BASE}/api/national-overview`),
-          fetch(`${API_BASE}/api/enrollment-timeline?months=12`),
-          fetch(`${API_BASE}/api/mobility/state-distribution`),
-          fetch(`${API_BASE}/api/mobility/demographic-distribution`),
-        ])
+        const endpoints = [
+          `${API_BASE}/api/national-overview`,
+          `${API_BASE}/api/enrollment-timeline?months=12`,
+          `${API_BASE}/api/mobility/state-distribution`,
+          `${API_BASE}/api/mobility/demographic-distribution`,
+        ]
+        
+        console.log('Endpoints:', endpoints)
+        
+        const [overviewRes, timelineRes, statesRes, demographicsRes] = await Promise.all(
+          endpoints.map(url => {
+            console.log('Fetching:', url)
+            return fetch(url).catch(err => {
+              console.error('Fetch failed for', url, ':', err)
+              throw err
+            })
+          })
+        )
 
         // Check if responses are ok
         if (!overviewRes.ok) throw new Error(`National overview failed: ${overviewRes.status}`)

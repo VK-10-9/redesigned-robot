@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import DashboardNav from "@/components/common/nav"
 import AccurateIndiaMap from "@/components/maps/accurate-india-map"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -145,39 +144,13 @@ export default function InfographicPage() {
   const COLORS = ['#94ABE8', '#10B981', '#F59E0B', '#EC4899']
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardNav />
-      <main className="max-w-[1100px] mx-auto px-6 py-20">
-        <div className="space-y-10">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted border border-border rounded-full text-sm font-medium mb-10">
-              <svg className="w-4 h-4 text-primary-lavender" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              <span className="text-primary-lavender font-semibold">Data Visualization Hub</span>
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-gradient tracking-wide mb-2">
-              INFOGRAPHIC
-            </h1>
-            <div className="w-32 h-1 bg-primary-lavender rounded-full mx-auto mb-8"></div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-              Visual Data Insights
-            </h2>
-            <h2 className="text-2xl md:text-3xl font-bold text-primary-lavender mb-6">
-              Across India
-            </h2>
-            <p className="max-w-2xl mx-auto text-muted-foreground text-lg mb-10 leading-relaxed">
-              Explore comprehensive visualizations of Aadhaar enrollment data across India with real-time insights and analytics.
-            </p>
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-t border-border">
-            <div className="text-center">
-              <h2 className="text-4xl font-bold text-foreground mb-1.5">{Object.keys(stateData).length}+</h2>
-              <p className="text-sm text-muted-foreground">States Covered</p>
-            </div>
+    <div className="space-y-10">
+      {/* Stats Section */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-border">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-foreground mb-1.5">{Object.keys(stateData).length}+</h2>
+          <p className="text-sm text-muted-foreground">States Covered</p>
+        </div>
             <div className="text-center">
               <h2 className="text-4xl font-bold text-foreground mb-1.5">
                 {(Object.values(stateData).reduce((sum, s) => sum + s.enrollments, 0) / 1000000).toFixed(0)}M+
@@ -361,7 +334,7 @@ export default function InfographicPage() {
                 Click on any state in the map above or explore our detailed analytics sections.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <button className="inline-flex items-center gap-2 px-8 py-4 bg-primary-lavender text-white font-semibold rounded-xl shadow-3d hover:shadow-3d-hover transition-all duration-300">
+                <button className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl shadow-3d hover:shadow-3d-hover transition-all duration-300">
                   State Analytics
                   <span>→</span>
                 </button>
@@ -372,7 +345,5 @@ export default function InfographicPage() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
   )
 }

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import DashboardNav from "@/components/common/nav"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -127,282 +126,260 @@ export default function EnhancedPolicyRecommendations() {
   }, {} as Record<string, number>)
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardNav />
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted border border-border rounded-full text-sm font-medium mb-6">
-              <svg className="w-4 h-4 text-primary-lavender" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              <span className="text-primary-lavender font-semibold">Policy Hub</span>
+    <div className="space-y-6">
+      {/* API Disclosure */}
+      <Alert className="border-primary/30 bg-primary/10">
+        <AlertTitle className="flex items-center gap-2 text-foreground">
+          <span className="text-xl">🤖</span>
+          AI Technology & Policy Disclosure
+        </AlertTitle>
+        <AlertDescription className="text-muted-foreground space-y-2">
+          <p className="font-semibold">Policy recommendation generation system:</p>
+          <div className="grid md:grid-cols-3 gap-3 mt-2">
+            <div className="p-2 bg-card rounded border border-border">
+              <strong>AI Provider:</strong> Groq API
+              <p className="text-xs text-muted-foreground mt-1">High-performance LLM inference</p>
             </div>
-            <h1 className="text-4xl font-bold text-gradient mb-2">
-              POLICY
-            </h1>
-            <div className="w-24 h-1 bg-primary-lavender rounded-full mx-auto mb-4"></div>
-            <p className="text-muted-foreground">
-              Data-driven policy insights for improving enrollment coverage and data quality
-            </p>
+            <div className="p-2 bg-card rounded border border-border">
+              <strong>Model:</strong> Qwen-3 32B
+              <p className="text-xs text-muted-foreground mt-1">Advanced policy analysis and reasoning (32B parameters)</p>
+            </div>
+            <div className="p-2 bg-card rounded border border-border">
+              <strong>Processing:</strong> Polling-based
+              <p className="text-xs text-muted-foreground mt-1">Real-time recommendation generation</p>
+            </div>
           </div>
+          <p className="text-sm mt-3">
+            <strong>Governance & Compliance:</strong> All policy recommendations are generated from 
+            aggregated, anonymized data analysis. No personally identifiable information (PII) is 
+            processed by external APIs. Recommendations undergo human expert review before implementation. 
+            System adheres to data protection regulations and ethical AI principles.
+          </p>
+        </AlertDescription>
+      </Alert>
 
-          {/* API Disclosure */}
-          <Alert className="border-primary-lavender/30 bg-primary-lavender/10">
-            <AlertTitle className="flex items-center gap-2 text-foreground">
-              <span className="text-xl">🤖</span>
-              AI Technology & Policy Disclosure
-            </AlertTitle>
-            <AlertDescription className="text-muted-foreground space-y-2">
-              <p className="font-semibold">Policy recommendation generation system:</p>
-              <div className="grid md:grid-cols-3 gap-3 mt-2">
-                <div className="p-2 bg-card rounded border border-border">
-                  <strong>AI Provider:</strong> Groq API
-                  <p className="text-xs text-muted-foreground mt-1">High-performance LLM inference</p>
-                </div>
-                <div className="p-2 bg-card rounded border border-border">
-                  <strong>Model:</strong> Qwen-3 32B
-                  <p className="text-xs text-muted-foreground mt-1">Advanced policy analysis and reasoning (32B parameters)</p>
-                </div>
-                <div className="p-2 bg-card rounded border border-border">
-                  <strong>Processing:</strong> Polling-based
-                  <p className="text-xs text-muted-foreground mt-1">Real-time recommendation generation</p>
-                </div>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-l-4 border-l-red-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              High Priority
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-red-600">{highPriority}</div>
+            <p className="text-xs text-muted-foreground mt-1">Immediate attention</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-blue-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Recommendations
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{recommendations.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Active policies</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Categories
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{Object.keys(byCategory).length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Policy domains</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-purple-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Data-Driven
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">100%</div>
+            <p className="text-xs text-muted-foreground mt-1">Evidence-based</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recommendations */}
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all">All ({recommendations.length})</TabsTrigger>
+          <TabsTrigger value="high">High Priority ({highPriority})</TabsTrigger>
+          <TabsTrigger value="infrastructure">Infrastructure</TabsTrigger>
+          <TabsTrigger value="quality">Data Quality</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="space-y-4 mt-6">
+          {loading ? (
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="animate-spin text-4xl mb-4">⏳</div>
+                <p className="text-muted-foreground">Generating policy recommendations...</p>
               </div>
-              <p className="text-sm mt-3">
-                <strong>Governance & Compliance:</strong> All policy recommendations are generated from 
-                aggregated, anonymized data analysis. No personally identifiable information (PII) is 
-                processed by external APIs. Recommendations undergo human expert review before implementation. 
-                System adheres to data protection regulations and ethical AI principles.
-              </p>
-            </AlertDescription>
-          </Alert>
+            </div>
+          ) : (
+            recommendations.map((rec) => {
+              const config = getPriorityConfig(rec.priority)
+              return (
+                <Card key={rec.id} className={`hover:shadow-lg transition-all border-l-4 ${
+                  rec.priority === 'High' ? 'border-l-red-500' :
+                  rec.priority === 'Medium' ? 'border-l-yellow-500' :
+                  'border-l-green-500'
+                }`}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
+                          <CardTitle className="text-xl">{rec.title}</CardTitle>
+                          <Badge variant={config.variant as any}>
+                            {config.icon} {rec.priority}
+                          </Badge>
+                        </div>
+                        <CardDescription className="text-base mb-2">{rec.description}</CardDescription>
+                        {rec.state && (
+                          <Badge variant="outline" className="mr-2">📍 {rec.state}</Badge>
+                        )}
+                        <Badge variant="outline">{rec.category}</Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="p-3 bg-muted rounded-lg">
+                        <div className="text-xs font-semibold text-muted-foreground mb-1">📊 Rationale</div>
+                        <div className="text-sm">{rec.rationale}</div>
+                      </div>
+                      <div className="p-3 bg-muted rounded-lg">
+                        <div className="text-xs font-semibold text-muted-foreground mb-1">🎯 Expected Impact</div>
+                        <div className="text-sm">{rec.expectedImpact}</div>
+                      </div>
+                      <div className="p-3 bg-muted rounded-lg">
+                        <div className="text-xs font-semibold text-muted-foreground mb-1">💰 Implementation Cost</div>
+                        <div className="text-sm font-semibold">{rec.implementationCost}</div>
+                      </div>
+                      <div className="p-3 bg-muted rounded-lg">
+                        <div className="text-xs font-semibold text-muted-foreground mb-1">⏱️ Timeframe</div>
+                        <div className="text-sm font-semibold">{rec.timeframe}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })
+          )}
+        </TabsContent>
 
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="border-l-4 border-l-red-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  High Priority
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-red-600">{highPriority}</div>
-                <p className="text-xs text-muted-foreground mt-1">Immediate attention</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-blue-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Recommendations
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{recommendations.length}</div>
-                <p className="text-xs text-muted-foreground mt-1">Active policies</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-green-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Categories
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{Object.keys(byCategory).length}</div>
-                <p className="text-xs text-muted-foreground mt-1">Policy domains</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-purple-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Data-Driven
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">100%</div>
-                <p className="text-xs text-muted-foreground mt-1">Evidence-based</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Recommendations */}
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">All ({recommendations.length})</TabsTrigger>
-              <TabsTrigger value="high">High Priority ({highPriority})</TabsTrigger>
-              <TabsTrigger value="infrastructure">Infrastructure</TabsTrigger>
-              <TabsTrigger value="quality">Data Quality</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="all" className="space-y-4 mt-6">
-              {loading ? (
-                <div className="flex items-center justify-center h-96">
-                  <div className="text-center">
-                    <div className="animate-spin text-4xl mb-4">⏳</div>
-                    <p className="text-muted-foreground">Generating policy recommendations...</p>
+        <TabsContent value="high" className="space-y-4 mt-6">
+          {recommendations.filter(r => r.priority === 'High').map(rec => {
+            const config = getPriorityConfig(rec.priority)
+            return (
+              <Card key={rec.id} className="border-l-4 border-l-red-500">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
+                    <CardTitle className="text-xl">{rec.title}</CardTitle>
+                    <Badge variant="destructive">{config.icon} {rec.priority}</Badge>
                   </div>
-                </div>
-              ) : (
-                recommendations.map((rec) => {
-                  const config = getPriorityConfig(rec.priority)
-                  return (
-                    <Card key={rec.id} className={`hover:shadow-lg transition-all border-l-4 ${
-                      rec.priority === 'High' ? 'border-l-red-500' :
-                      rec.priority === 'Medium' ? 'border-l-yellow-500' :
-                      'border-l-green-500'
-                    }`}>
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
-                              <CardTitle className="text-xl">{rec.title}</CardTitle>
-                              <Badge variant={config.variant as any}>
-                                {config.icon} {rec.priority}
-                              </Badge>
-                            </div>
-                            <CardDescription className="text-base mb-2">{rec.description}</CardDescription>
-                            {rec.state && (
-                              <Badge variant="outline" className="mr-2">📍 {rec.state}</Badge>
-                            )}
-                            <Badge variant="outline">{rec.category}</Badge>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="p-3 bg-muted rounded-lg">
-                            <div className="text-xs font-semibold text-muted-foreground mb-1">📊 Rationale</div>
-                            <div className="text-sm">{rec.rationale}</div>
-                          </div>
-                          <div className="p-3 bg-muted rounded-lg">
-                            <div className="text-xs font-semibold text-muted-foreground mb-1">🎯 Expected Impact</div>
-                            <div className="text-sm">{rec.expectedImpact}</div>
-                          </div>
-                          <div className="p-3 bg-muted rounded-lg">
-                            <div className="text-xs font-semibold text-muted-foreground mb-1">💰 Implementation Cost</div>
-                            <div className="text-sm font-semibold">{rec.implementationCost}</div>
-                          </div>
-                          <div className="p-3 bg-muted rounded-lg">
-                            <div className="text-xs font-semibold text-muted-foreground mb-1">⏱️ Timeframe</div>
-                            <div className="text-sm font-semibold">{rec.timeframe}</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )
-                })
-              )}
-            </TabsContent>
+                  <CardDescription className="text-base">{rec.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                    <p className="text-sm font-semibold text-red-900 dark:text-red-100">{rec.expectedImpact}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </TabsContent>
 
-            <TabsContent value="high" className="space-y-4 mt-6">
-              {recommendations.filter(r => r.priority === 'High').map(rec => {
-                const config = getPriorityConfig(rec.priority)
-                return (
-                  <Card key={rec.id} className="border-l-4 border-l-red-500">
-                    <CardHeader>
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
-                        <CardTitle className="text-xl">{rec.title}</CardTitle>
-                        <Badge variant="destructive">{config.icon} {rec.priority}</Badge>
-                      </div>
-                      <CardDescription className="text-base">{rec.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                        <p className="text-sm font-semibold text-red-900 dark:text-red-100">{rec.expectedImpact}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </TabsContent>
+        <TabsContent value="infrastructure" className="space-y-4 mt-6">
+          {recommendations.filter(r => r.category === 'Infrastructure').map(rec => (
+            <Card key={rec.id} className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
+                  {rec.title}
+                </CardTitle>
+                <CardDescription>{rec.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{rec.rationale}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
 
-            <TabsContent value="infrastructure" className="space-y-4 mt-6">
-              {recommendations.filter(r => r.category === 'Infrastructure').map(rec => (
-                <Card key={rec.id} className="border-l-4 border-l-blue-500">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
-                      {rec.title}
-                    </CardTitle>
-                    <CardDescription>{rec.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{rec.rationale}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </TabsContent>
+        <TabsContent value="quality" className="space-y-4 mt-6">
+          {recommendations.filter(r => r.category === 'Data Quality').map(rec => (
+            <Card key={rec.id} className="border-l-4 border-l-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
+                  {rec.title}
+                </CardTitle>
+                <CardDescription>{rec.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{rec.rationale}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+      </Tabs>
 
-            <TabsContent value="quality" className="space-y-4 mt-6">
-              {recommendations.filter(r => r.category === 'Data Quality').map(rec => (
-                <Card key={rec.id} className="border-l-4 border-l-green-500">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
-                      {rec.title}
-                    </CardTitle>
-                    <CardDescription>{rec.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{rec.rationale}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </TabsContent>
-          </Tabs>
-
-          {/* Information Card */}
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">ℹ️</span>
-                About Policy Recommendations
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm leading-relaxed">
-                Our AI-driven policy recommendation system analyzes enrollment patterns, coverage gaps, 
-                fraud indicators, and demographic trends to generate evidence-based policy suggestions.
-              </p>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-3 bg-white dark:bg-slate-900 rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <span>🔬</span>
-                    Analysis Methods
-                  </h4>
-                  <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Enrollment coverage gap analysis</li>
-                    <li>• Cost-benefit modeling</li>
-                    <li>• Impact simulation</li>
-                    <li>• Historical policy effectiveness</li>
-                    <li>• Stakeholder feedback integration</li>
-                  </ul>
-                </div>
-                <div className="p-3 bg-white dark:bg-slate-900 rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <span>✅</span>
-                    Implementation Support
-                  </h4>
-                  <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Detailed action plans</li>
-                    <li>• Resource requirements</li>
-                    <li>• Timeline estimates</li>
-                    <li>• Success metrics</li>
-                    <li>• Risk mitigation strategies</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+      {/* Information Card */}
+      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="text-2xl">ℹ️</span>
+            About Policy Recommendations
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm leading-relaxed">
+            Our AI-driven policy recommendation system analyzes enrollment patterns, coverage gaps, 
+            fraud indicators, and demographic trends to generate evidence-based policy suggestions.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-3 bg-white dark:bg-slate-900 rounded-lg">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <span>🔬</span>
+                Analysis Methods
+              </h4>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>• Enrollment coverage gap analysis</li>
+                <li>• Cost-benefit modeling</li>
+                <li>• Impact simulation</li>
+                <li>• Historical policy effectiveness</li>
+                <li>• Stakeholder feedback integration</li>
+              </ul>
+            </div>
+            <div className="p-3 bg-white dark:bg-slate-900 rounded-lg">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <span>✅</span>
+                Implementation Support
+              </h4>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>• Detailed action plans</li>
+                <li>• Resource requirements</li>
+                <li>• Timeline estimates</li>
+                <li>• Success metrics</li>
+                <li>• Risk mitigation strategies</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

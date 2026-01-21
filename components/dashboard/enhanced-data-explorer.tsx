@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
-import DashboardNav from "@/components/common/nav"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -117,27 +116,13 @@ export default function EnhancedDataExplorer() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardNav />
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              🔍 Data Explorer & Table View
-            </h1>
-            <p className="text-muted-foreground">
-              Browse, filter, and analyze enrollment records with advanced table features. 
-              Using API: {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8003"}
-            </p>
-          </div>
-
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="border-l-4 border-l-blue-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total Records
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-l-4 border-l-primary hover:shadow-lg transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Records
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -495,7 +480,7 @@ export default function EnhancedDataExplorer() {
                         <span><strong>Pattern Detection:</strong> Sorting and filtering helps identify unusual patterns or outliers</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-blue-500 mt-0.5">•</span>
+                        <span className="text-primary mt-0.5">•</span>
                         <span><strong>Transparency:</strong> Stakeholders can inspect actual data behind aggregated visualizations</span>
                       </li>
                     </ul>
@@ -505,7 +490,5 @@ export default function EnhancedDataExplorer() {
             </TabsContent>
           </Tabs>
         </div>
-      </main>
-    </div>
   )
 }
