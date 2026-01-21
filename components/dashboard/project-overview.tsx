@@ -97,7 +97,7 @@ export default function ProjectOverview() {
       {/* Hero Section */}
       <div className="text-center space-y-4 pb-6 border-b">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-          Vidyut: Aadhaar Intelligence Platform
+          SAMVIDHAN: Aadhaar Intelligence Platform
         </h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
           A comprehensive data-driven platform for analyzing Aadhaar enrollment patterns, 
@@ -121,7 +121,7 @@ export default function ProjectOverview() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-lg leading-relaxed">
-            Vidyut aims to provide government agencies, policymakers, and researchers with actionable 
+            SAMVIDHAN aims to provide government agencies, policymakers, and researchers with actionable
             insights into Aadhaar enrollment patterns and population dynamics. By leveraging advanced 
             data analytics and machine learning, we:
           </p>

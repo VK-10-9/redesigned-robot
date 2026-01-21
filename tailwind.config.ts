@@ -61,7 +61,12 @@ const config: Config = {
   				border: 'var(--sidebar-border)',
   				ring: 'var(--sidebar-ring)'
   			},
-  			// New button design system colors
+  			// SAMVIDHAN Design System Colors
+  			'primary-lavender': '#94ABE8',
+  			'primary-lavender-light': '#A8BBEC',
+  			'primary-lavender-dark': '#7A8FD4',
+  			'accent-blue': '#3B82F6',
+  			// Legacy button design system colors
   			main: 'var(--main)',
   			overlay: 'var(--overlay)',
   			bg: 'var(--bg)',

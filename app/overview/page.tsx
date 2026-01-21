@@ -1,12 +1,25 @@
-import NationalOverview from "@/components/dashboard/national-overview"
-import ProjectOverview from "@/components/dashboard/project-overview"
-import FrameworksOverview from "@/components/dashboard/frameworks-overview"
-import DashboardNav from "@/components/dashboard/nav"
+"use client"
+
+import dynamic from "next/dynamic"
+import DashboardNav from "@/components/common/nav"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+const NationalOverview = dynamic(
+  () => import("@/components/dashboard/national-overview"),
+  { ssr: false }
+)
+const ProjectOverview = dynamic(
+  () => import("@/components/dashboard/project-overview"),
+  { ssr: false }
+)
+const FrameworksOverview = dynamic(
+  () => import("@/components/dashboard/frameworks-overview"),
+  { ssr: false }
+)
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <DashboardNav />
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="frameworks" className="w-full">

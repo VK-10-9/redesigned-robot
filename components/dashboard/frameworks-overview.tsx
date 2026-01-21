@@ -205,7 +205,7 @@ export default function FrameworksOverview() {
       blue: "border-blue-500 bg-blue-50 dark:bg-blue-900/20",
       green: "border-green-500 bg-green-50 dark:bg-green-900/20",
       red: "border-red-500 bg-red-50 dark:bg-red-900/20",
-      purple: "border-purple-500 bg-purple-50 dark:bg-purple-900/20",
+      purple: "border-[#94ABE8] bg-[#94ABE8]/10 dark:bg-[#94ABE8]/20",
       orange: "border-orange-500 bg-orange-50 dark:bg-orange-900/20",
       indigo: "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
     }
@@ -216,9 +216,16 @@ export default function FrameworksOverview() {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-          Comprehensive Framework Architecture
+        <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted border border-border rounded-full text-sm font-medium mb-4">
+          <svg className="w-4 h-4 text-primary-lavender" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          <span className="text-primary-lavender font-semibold">Framework Architecture</span>
+        </div>
+        <h1 className="text-4xl font-bold text-gradient">
+          FRAMEWORKS
         </h1>
+        <div className="w-24 h-1 bg-primary-lavender rounded-full mx-auto mb-4"></div>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Six modular, jury-friendly frameworks designed for Aadhaar data integrity, identity resilience, 
           fraud detection, resource optimization, mobility tracking, and privacy-preserving analytics.
@@ -228,36 +235,36 @@ export default function FrameworksOverview() {
       {/* Frameworks Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {frameworks.map((framework) => (
-          <Card key={framework.id} className={`border-l-4 ${getColorClasses(framework.color)} hover:shadow-lg transition-shadow`}>
+          <Card key={framework.id} className="border border-border bg-card hover:shadow-3d-hover transition-all duration-300">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="space-y-1 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-3xl">{framework.icon}</span>
-                    <Badge variant="outline">{framework.number}</Badge>
+                    <Badge variant="outline" className="border-border text-muted-foreground">{framework.number}</Badge>
                   </div>
-                  <CardTitle className="text-lg leading-tight mt-2">{framework.name}</CardTitle>
-                  <CardDescription className="text-xs italic">{framework.tagline}</CardDescription>
+                  <CardTitle className="text-lg leading-tight mt-2 text-foreground">{framework.name}</CardTitle>
+                  <CardDescription className="text-xs italic text-muted-foreground">{framework.tagline}</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-3 bg-background rounded-lg">
-                <p className="text-sm font-semibold mb-1">🎯 Goal:</p>
+              <div className="p-3 bg-muted rounded-lg">
+                <p className="text-sm font-semibold mb-1 text-foreground">🎯 Goal:</p>
                 <p className="text-sm text-muted-foreground">{framework.goal}</p>
               </div>
 
               <div>
-                <p className="text-sm font-semibold mb-2">Core Components:</p>
+                <p className="text-sm font-semibold mb-2 text-foreground">Core Components:</p>
                 <ul className="space-y-2">
                   {framework.features.slice(0, 4).map((feature, idx) => (
                     <li key={idx} className="text-xs">
-                      <span className="font-medium">{feature.name}:</span>{" "}
-                      <span className="text-muted-foreground">{feature.description}</span>
+                      <span className="font-medium text-gray-900">{feature.name}:</span>{" "}
+                      <span className="text-gray-500">{feature.description}</span>
                     </li>
                   ))}
                   {framework.features.length > 4 && (
-                    <li className="text-xs text-muted-foreground italic">
+                    <li className="text-xs text-gray-500 italic">
                       +{framework.features.length - 4} more components...
                     </li>
                   )}

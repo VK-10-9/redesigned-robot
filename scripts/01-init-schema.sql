@@ -1,7 +1,7 @@
 -- DEPRECATED: Postgres schema is deprecated. Use CSV-only mode instead.
 -- Original schema preserved in scripts/postgres_deprecated/01-init-schema.sql
 
--- Vidyut Aadhaar Intelligence Platform Schema (DEPRECATED)
+-- SAMVIDHAN Aadhaar Intelligence Platform Schema (DEPRECATED)
 
 -- States table
 CREATE TABLE IF NOT EXISTS states (

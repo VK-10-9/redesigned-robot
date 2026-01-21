@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import DashboardNav from "@/components/dashboard/nav"
-import AccurateIndiaMap from "@/components/dashboard/accurate-india-map"
+import DashboardNav from "@/components/common/nav"
+import AccurateIndiaMap from "@/components/maps/accurate-india-map"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { 
@@ -41,7 +41,7 @@ export default function InfographicPage() {
 
   const fetchStateData = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/mobility/state-distribution")
+      const response = await fetch("http://localhost:8003/api/mobility/state-distribution")
       const data = await response.json()
       
       // Transform data into state-wise format
@@ -142,221 +142,235 @@ export default function InfographicPage() {
     { range: "<70%", count: Object.values(stateData).filter(s => s.coverage < 70).length },
   ]
 
-  const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']
+  const COLORS = ['#94ABE8', '#10B981', '#F59E0B', '#EC4899']
 
   return (
     <div className="min-h-screen bg-background">
       <DashboardNav />
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
+      <main className="max-w-[1100px] mx-auto px-6 py-20">
+        <div className="space-y-10">
           {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-              Data Infographics & Visualizations
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted border border-border rounded-full text-sm font-medium mb-10">
+              <svg className="w-4 h-4 text-primary-lavender" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              <span className="text-primary-lavender font-semibold">Data Visualization Hub</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold text-gradient tracking-wide mb-2">
+              INFOGRAPHIC
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Interactive visualizations of Aadhaar enrollment data across India
+            <div className="w-32 h-1 bg-primary-lavender rounded-full mx-auto mb-8"></div>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+              Visual Data Insights
+            </h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-lavender mb-6">
+              Across India
+            </h2>
+            <p className="max-w-2xl mx-auto text-muted-foreground text-lg mb-10 leading-relaxed">
+              Explore comprehensive visualizations of Aadhaar enrollment data across India with real-time insights and analytics.
             </p>
           </div>
 
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="border-l-4 border-l-blue-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total States</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{Object.keys(stateData).length}</div>
-                <p className="text-xs text-muted-foreground mt-1">Covered regions</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-green-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Enrollments</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">
-                  {(Object.values(stateData).reduce((sum, s) => sum + s.enrollments, 0) / 1000000).toFixed(1)}M
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">Across all states</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-purple-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Avg Coverage</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">
-                  {Object.keys(stateData).length > 0
-                    ? (Object.values(stateData).reduce((sum, s) => sum + s.coverage, 0) / Object.keys(stateData).length).toFixed(1)
-                    : 0}%
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">National average</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-orange-500">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">High Coverage States</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">
-                  {Object.values(stateData).filter(s => s.coverage >= 90).length}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">90%+ coverage</p>
-              </CardContent>
-            </Card>
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-t border-border">
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-foreground mb-1.5">{Object.keys(stateData).length}+</h2>
+              <p className="text-sm text-muted-foreground">States Covered</p>
+            </div>
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-foreground mb-1.5">
+                {(Object.values(stateData).reduce((sum, s) => sum + s.enrollments, 0) / 1000000).toFixed(0)}M+
+              </h2>
+              <p className="text-sm text-muted-foreground">Total Enrollments</p>
+            </div>
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-foreground mb-1.5">
+                {Object.keys(stateData).length > 0
+                  ? Math.round(Object.values(stateData).reduce((sum, s) => sum + s.coverage, 0) / Object.keys(stateData).length)
+                  : 0}%
+              </h2>
+              <p className="text-sm text-muted-foreground">Avg Coverage</p>
+            </div>
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-foreground mb-1.5">
+                {Object.values(stateData).filter(s => s.coverage >= 90).length}+
+              </h2>
+              <p className="text-sm text-muted-foreground">High Coverage States</p>
+            </div>
           </div>
 
-          {/* India Map */}
-          <AccurateIndiaMap onStateClick={handleStateClick} stateData={stateData} />
+          {/* India Map Section */}
+          <div className="py-12 border-t border-border">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Interactive India Map</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">Click on any state to explore detailed analytics and insights</p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 shadow-3d-sm">
+              <AccurateIndiaMap onStateClick={handleStateClick} stateData={stateData} />
+            </div>
+          </div>
 
-          {/* Charts Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top 10 States - Bar Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">📊</span>
-                  Top 10 States by Enrollment
-                </CardTitle>
-                <CardDescription>
-                  States with highest Aadhaar enrollments
-                </CardDescription>
-                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm">
-                  <p className="font-semibold mb-1">📌 Data Source & Logic:</p>
-                  <p className="text-muted-foreground">
-                    Data sourced from aggregated CSV enrollment records. Each state's total 
-                    enrollment count is calculated by summing all individual enrollment entries. 
-                    Bar chart selected for easy comparison of absolute values across states.
-                  </p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topStates}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="state" angle={-45} textAnchor="end" height={100} />
-                    <YAxis />
-                    <Tooltip formatter={(value: any) => (value / 1000000).toFixed(2) + "M"} />
-                    <Bar dataKey="enrollments" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
-                <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-sm">
-                  <p className="font-semibold mb-1">💡 Insight:</p>
-                  <p className="text-muted-foreground">
-                    Larger states like UP, Maharashtra, and Bihar dominate enrollment numbers due to 
-                    higher population. This chart helps identify states needing resource allocation.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Charts Section */}
+          <div className="py-12 border-t border-border">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Data Analytics & Insights</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">Comprehensive charts and visualizations for data-driven decisions</p>
+            </div>
+            
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              {/* Top 10 States - Bar Chart */}
+              <Card className="border border-border hover:shadow-3d-hover transition-all duration-300 bg-card">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-semibold text-foreground">Top 10 States by Enrollment</CardTitle>
+                  <CardDescription className="text-muted-foreground">States with highest Aadhaar enrollments</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-card rounded-xl p-4 border border-border">
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart data={topStates} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        <XAxis 
+                          dataKey="state" 
+                          angle={-45} 
+                          textAnchor="end" 
+                          height={100}
+                          tick={{ fontSize: 12, fill: '#6b7280' }}
+                        />
+                        <YAxis tick={{ fontSize: 12, fill: '#6b7280' }} />
+                        <Tooltip 
+                          formatter={(value: any) => [(value / 1000000).toFixed(2) + "M enrollments", "Enrollments"]}
+                          labelStyle={{ color: '#1f2937' }}
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                          }}
+                        />
+                        <Bar 
+                          dataKey="enrollments" 
+                          fill="#94ABE8"
+                          radius={[4, 4, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mt-6 p-4 bg-primary-lavender/10 rounded-xl border border-primary-lavender/20">
+                    <div className="flex items-start gap-2">
+                      <span className="text-primary-lavender mt-0.5">💡</span>
+                      <div>
+                        <p className="font-semibold text-foreground mb-2">Key Insight:</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Larger states like UP, Maharashtra, and Bihar dominate enrollment numbers due to 
+                          higher population. This chart helps identify states needing resource allocation for 
+                          upcoming enrollment drives and infrastructure development.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Coverage Distribution - Pie Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">🥧</span>
-                  Coverage Distribution
-                </CardTitle>
-                <CardDescription>
-                  States grouped by coverage percentage
-                </CardDescription>
-                <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-sm">
-                  <p className="font-semibold mb-1">📌 Data Source & Logic:</p>
-                  <p className="text-muted-foreground">
-                    Coverage calculated as (enrollments / estimated_population) × 100. States are 
-                    grouped into coverage brackets. Pie chart chosen to show proportional distribution.
-                  </p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={coverageData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={(entry) => `${entry.range}: ${entry.count}`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="count"
-                    >
-                      {coverageData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-sm">
-                  <p className="font-semibold mb-1">💡 Insight:</p>
-                  <p className="text-muted-foreground">
-                    Most states achieve 70%+ coverage, indicating successful enrollment drives. 
-                    States in lower brackets need targeted outreach programs.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+              {/* Coverage Distribution - Pie Chart */}
+              <Card className="border border-border hover:shadow-3d-hover transition-all duration-300 bg-card">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-semibold text-foreground">Coverage Distribution</CardTitle>
+                  <CardDescription className="text-muted-foreground">States grouped by coverage percentage</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-card rounded-xl p-4 border border-border">
+                    <ResponsiveContainer width="100%" height={350}>
+                      <PieChart>
+                        <Pie
+                          data={coverageData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={(entry) => `${entry.range}: ${entry.count}`}
+                          outerRadius={90}
+                          fill="#8884d8"
+                          dataKey="count"
+                        >
+                          {coverageData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          formatter={(value: any) => [value + " states", "Count"]}
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                          }}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           {/* Additional Info */}
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">ℹ️</span>
-                About These Visualizations
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 bg-white dark:bg-slate-900 rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <span>🎯</span>
-                    Purpose
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    These infographics provide at-a-glance insights into Aadhaar enrollment patterns, 
-                    helping identify coverage gaps and successful regions.
-                  </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-slate-900 rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <span>📊</span>
-                    Data Processing
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Data is aggregated from multiple CSV sources, cleaned for duplicates, 
-                    and normalized for consistent state naming conventions.
-                  </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-slate-900 rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <span>🔄</span>
-                    Real-world Relevance
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    These visualizations mirror those used by government agencies for policy planning, 
-                    resource allocation, and monitoring enrollment drive effectiveness.
-                  </p>
-                </div>
-                <div className="p-4 bg-white dark:bg-slate-900 rounded-lg">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <span>💡</span>
-                    Interactivity
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Click on states in the map to navigate to detailed state-wise analytics. 
-                    Hover over chart elements for precise values and additional context.
-                  </p>
-                </div>
+          <div className="py-12 border-t border-border">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">About These Visualizations</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">Understanding the data sources and methodologies</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="p-6 bg-card border border-border rounded-xl hover:shadow-3d-hover transition-all duration-300">
+                <h4 className="font-semibold text-lg text-foreground mb-3">Purpose</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  These infographics provide at-a-glance insights into Aadhaar enrollment patterns, 
+                  helping policymakers identify coverage gaps and successful regions.
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              
+              <div className="p-6 bg-card border border-border rounded-xl hover:shadow-3d-hover transition-all duration-300">
+                <h4 className="font-semibold text-lg text-foreground mb-3">Data Processing</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Data is aggregated from multiple CSV sources, cleaned for duplicates, 
+                  normalized for consistent state naming, and validated against databases.
+                </p>
+              </div>
+              
+              <div className="p-6 bg-card border border-border rounded-xl hover:shadow-3d-hover transition-all duration-300">
+                <h4 className="font-semibold text-lg text-foreground mb-3">Real-world Relevance</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  These visualizations mirror those used by government agencies for policy planning, 
+                  resource allocation, and monitoring enrollment effectiveness.
+                </p>
+              </div>
+              
+              <div className="p-6 bg-card border border-border rounded-xl hover:shadow-3d-hover transition-all duration-300">
+                <h4 className="font-semibold text-lg text-foreground mb-3">Interactivity</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Click on states in the map to navigate to detailed analytics. 
+                  Hover over chart elements for precise values.
+                </p>
+              </div>
+            </div>
+            
+            {/* CTA Section */}
+            <div className="mt-12 text-center py-12 bg-muted/30 rounded-xl border border-border">
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Ready to Explore More?</h3>
+              <p className="max-w-[720px] mx-auto text-muted-foreground mb-8">
+                Click on any state in the map above or explore our detailed analytics sections.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <button className="inline-flex items-center gap-2 px-8 py-4 bg-primary-lavender text-white font-semibold rounded-xl shadow-3d hover:shadow-3d-hover transition-all duration-300">
+                  State Analytics
+                  <span>→</span>
+                </button>
+                <button className="inline-flex items-center gap-2 px-8 py-4 border-2 border-border text-foreground font-semibold rounded-xl hover:bg-muted transition-all duration-300">
+                  Data Explorer
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

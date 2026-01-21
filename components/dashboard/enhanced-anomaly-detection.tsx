@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import DashboardNav from "@/components/dashboard/nav"
+import DashboardNav from "@/components/common/nav"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -101,7 +101,13 @@ export default function EnhancedAnomalyDetection() {
       const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY
       
       if (!apiKey || apiKey === "your_groq_api_key_here") {
-        throw new Error("Groq API key not configured")
+        console.warn("⚠ Groq API key not configured - using fallback analysis")
+        // Use fallback analysis when API key is not configured
+        const fallbackAnalysis = generateAIAnalysis(anomaly)
+        setAnomalies(prev => prev.map(a => 
+          a.id === anomaly.id ? { ...a, aiAnalysis: fallbackAnalysis } : a
+        ))
+        return
       }
       
       const prompt = `Analyze this Aadhaar enrollment anomaly and provide:
@@ -209,33 +215,40 @@ Provide a detailed, actionable analysis.`
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-6">
           {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              🔍 AI-Powered Anomaly Detection
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted border border-border rounded-full text-sm font-medium mb-6">
+              <svg className="w-4 h-4 text-primary-lavender" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              <span className="text-primary-lavender font-semibold">Anomaly Detection</span>
+            </div>
+            <h1 className="text-4xl font-bold text-gradient mb-2">
+              ANOMALIES
             </h1>
+            <div className="w-24 h-1 bg-primary-lavender rounded-full mx-auto mb-4"></div>
             <p className="text-muted-foreground">
-              Real-time fraud detection and pattern analysis using advanced algorithms and AI
+              Real-time fraud detection and pattern analysis using advanced algorithms
             </p>
           </div>
 
           {/* API Disclosure */}
-          <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-900/20">
-            <AlertTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
+          <Alert className="border-primary-lavender/30 bg-primary-lavender/10">
+            <AlertTitle className="flex items-center gap-2 text-foreground">
               <span className="text-xl">🤖</span>
               AI Technology Disclosure
             </AlertTitle>
-            <AlertDescription className="text-blue-800 dark:text-blue-200 space-y-2">
+            <AlertDescription className="text-muted-foreground space-y-2">
               <p className="font-semibold">This anomaly detection system utilizes:</p>
               <div className="grid md:grid-cols-3 gap-3 mt-2">
-                <div className="p-2 bg-white dark:bg-slate-900 rounded">
+                <div className="p-2 bg-card rounded border border-border">
                   <strong>API Provider:</strong> Groq
                   <p className="text-xs text-muted-foreground mt-1">Fast inference API for LLM models</p>
                 </div>
-                <div className="p-2 bg-white dark:bg-slate-900 rounded">
+                <div className="p-2 bg-card rounded border border-border">
                   <strong>Model:</strong> Qwen-3 32B
                   <p className="text-xs text-muted-foreground mt-1">Advanced reasoning and analysis capabilities (32B parameters)</p>
                 </div>
-                <div className="p-2 bg-white dark:bg-slate-900 rounded">
+                <div className="p-2 bg-card rounded border border-border">
                   <strong>Mechanism:</strong> Polling-based
                   <p className="text-xs text-muted-foreground mt-1">Real-time analysis with status updates</p>
                 </div>

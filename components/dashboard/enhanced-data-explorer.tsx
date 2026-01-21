@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import DashboardNav from "@/components/dashboard/nav"
+import dynamic from "next/dynamic"
+import DashboardNav from "@/components/common/nav"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { useDebounce } from "@/hooks/use-debounce"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import * as api from "@/lib/api"
@@ -20,77 +22,68 @@ interface EnrollmentRow {
 }
 
 export default function EnhancedDataExplorer() {
+  const [mounted, setMounted] = useState(false)
   const [rows, setRows] = useState<EnrollmentRow[]>([])
   const [filteredRows, setFilteredRows] = useState<EnrollmentRow[]>([])
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(25)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [selectedState, setSelectedState] = useState<string>("")
-  const [sortField, setSortField] = useState<keyof EnrollmentRow | null>(null)
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [sortField, setSortField] = useState<keyof EnrollmentRow | null>('date')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   const [availableStates, setAvailableStates] = useState<string[]>([])
 
   useEffect(() => {
-    fetchData()
-  }, [page, limit])
+    setMounted(true)
+    // Fetch available states for the filter dropdown only once
+    const fetchStates = async () => {
+      try {
+        const states = await api.getExplorerStates()
+        setAvailableStates(states.sort())
+      } catch (err) {
+        console.error("Failed to fetch states", err)
+      }
+    }
+    fetchStates()
+  }, [])
 
   useEffect(() => {
-    // Filter and sort data
-    let filtered = [...rows]
-    
-    // Apply state filter
-    if (selectedState) {
-      filtered = filtered.filter(row => row.state === selectedState)
+    if (mounted) {
+      fetchData()
     }
-    
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(row => 
-        row.state?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.district?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.date?.includes(searchTerm)
-      )
-    }
-    
-    // Apply sorting
-    if (sortField) {
-      filtered.sort((a, b) => {
-        const aVal = a[sortField]
-        const bVal = b[sortField]
-        
-        if (typeof aVal === 'number' && typeof bVal === 'number') {
-          return sortDirection === 'asc' ? aVal - bVal : bVal - aVal
-        }
-        
-        if (typeof aVal === 'string' && typeof bVal === 'string') {
-          return sortDirection === 'asc' 
-            ? aVal.localeCompare(bVal)
-            : bVal.localeCompare(aVal)
-        }
-        
-        return 0
-      })
-    }
-    
-    setFilteredRows(filtered)
-    
-    // Extract unique states
-    const states = Array.from(new Set(rows.map(r => r.state).filter(Boolean))).sort()
-    setAvailableStates(states)
-  }, [rows, searchTerm, selectedState, sortField, sortDirection])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit, mounted, debouncedSearchTerm, selectedState, sortField, sortDirection])
 
   const fetchData = async () => {
     setLoading(true)
+    setError(null)
     try {
-      const res = await api.getExplorerEnrollment({ page, limit }) as any
+      const params = {
+        page,
+        limit,
+        search: debouncedSearchTerm,
+        state: selectedState,
+        sort: sortField,
+        order: sortDirection,
+      }
+      console.log('Fetching data from API with params:', params)
+      const res = (await api.getExplorerEnrollment(params)) as any
+      console.log('API response received:', res)
+      
       const data = res?.rows || []
       setRows(data)
-      setTotal(res?.total || data.length)
+      setTotal(res?.total || 0)
+      
     } catch (err) {
       console.error("Data explorer fetch error", err)
+      console.log('Error details:', err)
+      setError(err instanceof Error ? err.message : 'Failed to fetch data')
       setRows([])
+      setTotal(0)
     } finally {
       setLoading(false)
     }
@@ -103,6 +96,7 @@ export default function EnhancedDataExplorer() {
       setSortField(field)
       setSortDirection('asc')
     }
+    setPage(1) // Reset to first page on sort
   }
 
   const getSortIcon = (field: keyof EnrollmentRow) => {
@@ -110,12 +104,17 @@ export default function EnhancedDataExplorer() {
     return sortDirection === 'asc' ? "↑" : "↓"
   }
 
-  const totalEnrollments = filteredRows.reduce((sum, row) => 
+  // These are now calculated based on the current page, not all data.
+  // For more accurate global stats, new API endpoints would be needed.
+  const totalEnrollments = rows.reduce((sum, row) => 
     sum + (row.age_0_5 || 0) + (row.age_5_17 || 0) + (row.age_18_greater || 0), 0
   )
+  const uniqueStates = new Set(rows.map(r => r.state)).size
+  const uniqueDistricts = new Set(rows.map(r => r.district)).size
 
-  const uniqueStates = new Set(filteredRows.map(r => r.state)).size
-  const uniqueDistricts = new Set(filteredRows.map(r => r.district)).size
+  if (!mounted) {
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,7 +127,8 @@ export default function EnhancedDataExplorer() {
               🔍 Data Explorer & Table View
             </h1>
             <p className="text-muted-foreground">
-              Browse, filter, and analyze enrollment records with advanced table features
+              Browse, filter, and analyze enrollment records with advanced table features. 
+              Using API: {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8003"}
             </p>
           </div>
 
@@ -141,9 +141,9 @@ export default function EnhancedDataExplorer() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{filteredRows.length}</div>
+                <div className="text-3xl font-bold">{total}</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {searchTerm ? `Filtered from ${rows.length}` : 'All records'}
+                  {debouncedSearchTerm || selectedState ? `Matching filter` : 'Total records in DB'}
                 </p>
               </CardContent>
             </Card>
@@ -156,9 +156,9 @@ export default function EnhancedDataExplorer() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {totalEnrollments < 1000 ? '<1K' : `${(totalEnrollments / 1000).toFixed(0)}K`}
+                  {totalEnrollments < 1000 ? totalEnrollments : `${(totalEnrollments / 1000).toFixed(0)}K`}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Across all ages</p>
+                <p className="text-xs text-muted-foreground mt-1">On current page</p>
               </CardContent>
             </Card>
 
@@ -170,7 +170,7 @@ export default function EnhancedDataExplorer() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{uniqueStates}</div>
-                <p className="text-xs text-muted-foreground mt-1">Unique states</p>
+                <p className="text-xs text-muted-foreground mt-1">On current page</p>
               </CardContent>
             </Card>
 
@@ -182,7 +182,7 @@ export default function EnhancedDataExplorer() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{uniqueDistricts}</div>
-                <p className="text-xs text-muted-foreground mt-1">Unique districts</p>
+                <p className="text-xs text-muted-foreground mt-1">On current page</p>
               </CardContent>
             </Card>
           </div>
@@ -204,7 +204,7 @@ export default function EnhancedDataExplorer() {
                         Sortable and filterable enrollment data by date, location, and age groups
                       </CardDescription>
                     </div>
-                    <Badge variant="outline">{filteredRows.length} rows</Badge>
+                    <Badge variant="outline">{total} records</Badge>
                   </div>
                   
                   {/* Search and Controls */}
@@ -252,7 +252,16 @@ export default function EnhancedDataExplorer() {
                         <p className="text-muted-foreground">Loading enrollment data...</p>
                       </div>
                     </div>
-                  ) : filteredRows.length > 0 ? (
+                  ) : error ? (
+                    <div className="h-96 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-6xl mb-4">⚠️</div>
+                        <p className="text-destructive font-semibold mb-2">Failed to load data</p>
+                        <p className="text-muted-foreground text-sm mb-4">{error}</p>
+                        <Button onClick={fetchData} variant="outline">Retry</Button>
+                      </div>
+                    </div>
+                  ) : rows.length > 0 ? (
                     <>
                       <div className="overflow-x-auto border rounded-lg">
                         <table className="w-full">
@@ -311,7 +320,7 @@ export default function EnhancedDataExplorer() {
                             </tr>
                           </thead>
                           <tbody>
-                            {filteredRows.slice((page - 1) * limit, page * limit).map((row, i) => {
+                            {rows.map((row, i) => {
                               const rowTotal = (row.age_0_5 || 0) + (row.age_5_17 || 0) + (row.age_18_greater || 0)
                               return (
                                 <tr 
@@ -338,7 +347,7 @@ export default function EnhancedDataExplorer() {
                       {/* Pagination */}
                       <div className="flex items-center justify-between mt-4 px-2">
                         <div className="text-sm text-muted-foreground">
-                          Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, filteredRows.length)} of {filteredRows.length} records
+                          Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, total)} of {total} records
                         </div>
                         <div className="flex gap-2 items-center">
                           <Button
@@ -350,13 +359,13 @@ export default function EnhancedDataExplorer() {
                             ← Previous
                           </Button>
                           <span className="text-sm px-3">
-                            Page {page} of {Math.ceil(filteredRows.length / limit)}
+                            Page {page} of {Math.ceil(total / limit)}
                           </span>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setPage(p => p + 1)}
-                            disabled={page * limit >= filteredRows.length}
+                            disabled={page * limit >= total}
                           >
                             Next →
                           </Button>
@@ -381,7 +390,7 @@ export default function EnhancedDataExplorer() {
                         <div className="text-6xl mb-4">📭</div>
                         <p className="text-lg font-medium">No data found</p>
                         <p className="text-sm text-muted-foreground mt-2">
-                          {searchTerm ? 'Try adjusting your search filters' : 'No enrollment records available'}
+                          {debouncedSearchTerm ? 'Try adjusting your search filters' : 'No enrollment records available'}
                         </p>
                       </div>
                     </div>
@@ -449,7 +458,7 @@ export default function EnhancedDataExplorer() {
                           Click any column header to sort ascending/descending.
                         </p>
                       </div>
-                      <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <div className="p-3 bg-primary-lavender/15 dark:bg-primary-lavender/20 rounded-lg">
                         <div className="font-semibold text-sm mb-1">📄 Pagination</div>
                         <p className="text-xs text-muted-foreground">
                           Navigate through large datasets. Adjust rows per page (25/50/100).
@@ -464,7 +473,7 @@ export default function EnhancedDataExplorer() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-lg">
+                  <div className="p-4 bg-gradient-to-r from-primary-lavender/10 to-primary-lavender/5 dark:from-slate-800 dark:to-slate-700 rounded-lg">
                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
                       <span>🎯</span>
                       Why Table View?

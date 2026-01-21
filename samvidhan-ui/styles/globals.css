@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Color Variables */
+:root {
+  --primary: #94ABE8;
+  --primary-light: #A8BBEC;
+  --primary-dark: #7A8FD4;
+  --secondary: #1F2937;
+  --background: #FFFFFF;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  --accent: #3B82F6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0F172A;
+    --muted: #1E293B;
+    --muted-foreground: #A1A1AA;
+  }
+}
+
+/* Custom 3D Button Shadow */
+.shadow-3d {
+  box-shadow: 0 10px 30px rgba(148, 171, 232, 0.25),
+              0 0 0 1px rgba(148, 171, 232, 0.1);
+}
+
+.shadow-3d-hover {
+  box-shadow: 0 15px 40px rgba(148, 171, 232, 0.35),
+              0 0 0 1px rgba(148, 171, 232, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Text Gradient Effect */
+.text-gradient {
+  background: linear-gradient(135deg, #94ABE8 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow Effect */
+.glow {
+  box-shadow: 0 0 20px rgba(148, 171, 232, 0.5);
+}
+
+/* Smooth Transitions */
+* {
+  @apply transition-colors duration-200;
+}
+
+button {
+  @apply transition-all duration-300;
+}
+
+a {
+  @apply transition-colors duration-200;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Focus Styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Placeholder Styling */
+::placeholder {
+  @apply text-muted-foreground;
+}
+
+/* Selection Styling */
+::selection {
+  @apply bg-primary text-white;
+}
+
+/* Links */
+a {
+  @apply text-primary hover:text-primary-dark;
+}

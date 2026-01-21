@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Startup script for Vidyut API backend.
+Startup script for SAMVIDHAN API backend.
 Runs with proper environment configuration.
 """
 import sys

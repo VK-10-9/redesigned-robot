@@ -3,83 +3,85 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ------------------------------
+   Root & Global Styles (VishwaDev)
+--------------------------------*/
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --card: #ffffff;
-  --card-foreground: #0a0a0a;
-  --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
-  --primary: #5b2c6f;
-  --primary-foreground: #0a0a0a;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #0a0a0a;
-  --muted: #f2f2f2;
-  --muted-foreground: #6b6b6b;
-  --accent: #f5f5f5;
-  --accent-foreground: #0a0a0a;
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: #e5e5e5;
-  --input: #e5e5e5;
-  --ring: #0a0a0a;
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* SAMVIDHAN Design System Colors */
+  --background: 255 255 255;
+  --foreground: 31 41 55;
+  --card: 255 255 255;
+  --card-foreground: 31 41 55;
+  --popover: 255 255 255;
+  --popover-foreground: 31 41 55;
+  
+  /* Primary: Lavender Blue #94ABE8 = rgb(148, 171, 232) */
+  --primary: 148 171 232;
+  --primary-foreground: 255 255 255;
+  --primary-light: 168 187 236;
+  --primary-dark: 122 143 212;
+  
+  /* Secondary: Dark Gray #1F2937 */
+  --secondary: 243 244 246;
+  --secondary-foreground: 31 41 55;
+  
+  /* Muted: Light Gray #F3F4F6 */
+  --muted: 243 244 246;
+  --muted-foreground: 107 114 128;
+  
+  /* Accent: Bright Blue #3B82F6 */
+  --accent: 59 130 246;
+  --accent-foreground: 255 255 255;
+  
+  --destructive: 239 68 68;
+  --destructive-foreground: 255 255 255;
+  --success: 16 185 129;
+  --warning: 245 158 11;
+  
+  --border: 229 231 235;
+  --input: 229 231 235;
+  --ring: 148 171 232;
+  --radius: 12px;
+  
+  /* Chart colors - SAMVIDHAN palette */
+  --chart-1: 148 171 232;
+  --chart-2: 16 185 129;
+  --chart-3: 249 115 22;
+  --chart-4: 236 72 153;
+  --chart-5: 59 130 246;
   
   /* 3D Shadow Effects */
-  --box-shadow-x: 4px;
-  --box-shadow-y: 4px;
-  --shadow-3d: var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border);
+  --shadow-3d: 0 10px 30px rgba(148, 171, 232, 0.25), 0 0 0 1px rgba(148, 171, 232, 0.1);
+  --shadow-3d-hover: 0 15px 40px rgba(148, 171, 232, 0.35), 0 0 0 1px rgba(148, 171, 232, 0.2);
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --card: #0a0a0a;
-  --card-foreground: #ffffff;
-  --popover: #0a0a0a;
-  --popover-foreground: #ffffff;
-  --primary: #5b2c6f;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1a1a1a;
-  --secondary-foreground: #ffffff;
-  --muted: #1a1a1a;
-  --muted-foreground: #a3a3a3;
-  --accent: #1a1a1a;
-  --accent-foreground: #ffffff;
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: #2a2a2a;
-  --input: #2a2a2a;
-  --ring: #ffffff;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --background: 10 10 10;
+  --foreground: 250 250 250;
+  --card: 23 23 23;
+  --card-foreground: 250 250 250;
+  --popover: 23 23 23;
+  --popover-foreground: 250 250 250;
+  --primary: 129 140 248;
+  --primary-foreground: 255 255 255;
+  --secondary: 38 38 38;
+  --secondary-foreground: 250 250 250;
+  --muted: 38 38 38;
+  --muted-foreground: 163 163 163;
+  --accent: 38 38 38;
+  --accent-foreground: 165 180 252;
+  --destructive: 185 28 28;
+  --destructive-foreground: 255 255 255;
+  --border: 38 38 38;
+  --input: 38 38 38;
+  --ring: 129 140 248;
   
-  /* 3D Shadow Effects for dark mode */
-  --shadow-3d: var(--box-shadow-x) var(--box-shadow-y) 0px 0px var(--border);
+  /* Chart colors - dark mode */
+  --chart-1: 129 140 248;
+  --chart-2: 74 222 128;
+  --chart-3: 251 146 60;
+  --chart-4: 244 114 182;
+  --chart-5: 56 189 248;
 }
 
 @theme inline {
@@ -126,31 +128,113 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+  }
+}
+
+/* ------------------------------
+   VishwaDev Button Styles
+--------------------------------*/
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl text-base font-semibold cursor-pointer transition-all duration-200;
+    background-color: rgb(var(--primary));
+    color: rgb(var(--primary-foreground));
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: rgb(var(--primary-dark));
+    transform: translateY(-1px);
+  }
+  
+  .btn-outline {
+    @apply inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl text-base font-semibold cursor-pointer transition-all duration-200;
+    background: transparent;
+    color: rgb(var(--foreground));
+    border: 2px solid rgb(var(--foreground));
+  }
+  
+  .btn-outline:hover {
+    background-color: rgb(var(--foreground));
+    color: rgb(var(--background));
+  }
+  
+  .hero-badge {
+    @apply inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-sm font-medium;
+    border: 1px solid rgb(var(--border));
+  }
+  
+  .subdomain-box {
+    @apply inline-block px-6 py-3.5 rounded-xl font-mono text-sm;
+    background-color: #f8fafc;
+    color: #334155;
+    border: 1px dashed rgb(var(--border));
   }
 }
 
 @layer utilities {
+  /* SAMVIDHAN 3D Shadow Effects */
   .shadow-3d {
-    box-shadow: var(--shadow-3d);
-    border: 2px solid var(--border);
+    box-shadow: 0 10px 30px rgba(148, 171, 232, 0.25), 0 0 0 1px rgba(148, 171, 232, 0.1);
   }
   
   .shadow-3d-sm {
-    box-shadow: 2px 2px 0px 0px var(--border);
-    border: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(148, 171, 232, 0.2);
   }
   
   .shadow-3d-lg {
-    box-shadow: 6px 6px 0px 0px var(--border);
-    border: 2px solid var(--border);
+    box-shadow: 0 15px 40px rgba(148, 171, 232, 0.3), 0 0 0 1px rgba(148, 171, 232, 0.15);
+  }
+  
+  .shadow-3d-hover {
+    box-shadow: 0 15px 40px rgba(148, 171, 232, 0.35), 0 0 0 1px rgba(148, 171, 232, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .hover\:shadow-3d-hover:hover {
-    box-shadow: 2px 2px 0px 0px var(--border);
-    transform: translate(2px, 2px);
-    transition: all 0.2s ease;
+    box-shadow: 0 15px 40px rgba(148, 171, 232, 0.35), 0 0 0 1px rgba(148, 171, 232, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Text Gradient Effect */
+  .text-gradient {
+    background: linear-gradient(135deg, #94ABE8 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Primary color utilities */
+  .bg-primary-lavender {
+    background-color: #94ABE8;
+  }
+  
+  .text-primary-lavender {
+    color: #94ABE8;
+  }
+  
+  .border-primary-lavender {
+    border-color: #94ABE8;
+  }
+}
+
+/* ------------------------------
+   Responsive Adjustments
+--------------------------------*/
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 60px;
+  }
+  
+  .hero-section p {
+    font-size: 16px;
   }
 }

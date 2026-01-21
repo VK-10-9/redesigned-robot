@@ -1,21 +1,24 @@
 import os
+import sys
 import asyncio
 import logging
 from datetime import datetime
 from typing import Optional
+
+# Ensure backend directory is in path for module imports
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 # Import async I/O handler
-from async_io_handler import get_async_handler, async_cached, async_with_retry
+from core.async_io_handler import get_async_handler, async_cached, async_with_retry
 
 # Import database health functions
-try:
-    from .csv_db import health_check, optimize_cache
-except ImportError:
-    from csv_db import health_check, optimize_cache
+from core.csv_db import health_check, optimize_cache
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -27,49 +30,28 @@ load_dotenv()
 # CSV-only datastore (Postgres removed)
 USE_CSV_DB = os.getenv("USE_CSV_DB", "1") == "1"
 if USE_CSV_DB:
-    try:
-        # Try relative imports (when run as module)
-        from .csv_db import (
-            explorer_enrollment,
-            get_coverage_gaps,
-            get_demographic_distribution,
-            get_demographics,
-            get_enrollment_timeline,
-            get_state_distribution,
-            clear_cache,
-            get_cache_stats,
-            get_available_states,
-            get_available_districts,
-            get_unified_state_metrics,
-            get_combined_demographics,
-            get_dataset_summary,
-            health_check,
-            optimize_cache,
-        )
-    except ImportError:
-        # Fall back to absolute imports (when run as script)
-        from csv_db import (
-            explorer_enrollment,
-            get_coverage_gaps,
-            get_demographic_distribution,
-            get_demographics,
-            get_enrollment_timeline,
-            get_state_distribution,
-            clear_cache,
-            get_cache_stats,
-            get_available_states,
-            get_available_districts,
-            get_unified_state_metrics,
-            get_combined_demographics,
-            get_dataset_summary,
-            health_check,
-            optimize_cache,
-        )
+    from core.csv_db import (
+        explorer_enrollment,
+        get_coverage_gaps,
+        get_demographic_distribution as csv_get_demographic_distribution,
+        get_demographics,
+        get_enrollment_timeline as csv_get_enrollment_timeline,
+        get_state_distribution as csv_get_state_distribution,
+        clear_cache,
+        get_cache_stats,
+        get_available_states,
+        get_available_districts,
+        get_unified_state_metrics,
+        get_combined_demographics,
+        get_dataset_summary,
+        health_check,
+        optimize_cache,
+    )
 else:
     raise RuntimeError(
         "Postgres support removed. Set USE_CSV_DB=1 to run in CSV-only mode."
     )
-app = FastAPI(title="Vidyut API", description="Aadhaar Intelligence Platform API")
+app = FastAPI(title="SAMVIDHAN API", description="Aadhaar Intelligence Platform API")
 
 # CORS middleware for frontend integration
 app.add_middleware(
@@ -89,7 +71,7 @@ async def root():
     """Root endpoint - API is running"""
     return {
         "status": "running",
-        "api": "Vidyut - Aadhaar Intelligence Platform",
+        "api": "SAMVIDHAN - Aadhaar Intelligence Platform",
         "docs": "/docs",
         "version": "1.0.0"
     }
@@ -117,7 +99,7 @@ async def get_national_overview():
         async def fetch_stats():
             # Run sync operation in thread pool to avoid blocking
             loop = asyncio.get_event_loop()
-            states = await loop.run_in_executor(None, get_state_distribution, 1000)
+            states = await loop.run_in_executor(None, csv_get_state_distribution, 1000)
             return states
         
         states = await handler.execute_io_operation(
@@ -155,7 +137,7 @@ async def get_enrollment_timeline(months: int = Query(12, ge=1, le=120)):
         
         async def fetch_timeline():
             loop = asyncio.get_event_loop()
-            return await loop.run_in_executor(None, get_enrollment_timeline, months)
+            return await loop.run_in_executor(None, csv_get_enrollment_timeline, months)
         
         timeline = await handler.execute_io_operation(
             "fetch_enrollment_timeline",
@@ -183,7 +165,7 @@ async def get_state_distribution():
         
         async def fetch_distribution():
             loop = asyncio.get_event_loop()
-            return await loop.run_in_executor(None, get_state_distribution, 1000)
+            return await loop.run_in_executor(None, csv_get_state_distribution, 1000)
         
         data = await handler.execute_io_operation(
             "fetch_state_distribution",
@@ -201,14 +183,14 @@ async def get_state_distribution():
 
 
 @app.get("/api/mobility/demographic-distribution")
-async def get_demographic_distribution():
+async def get_mobility_demographic_distribution():
     """Get enrollment by demographics (CSV-only) - ASYNC"""
     try:
         handler = get_async_handler()
         
         async def fetch_demographics():
             loop = asyncio.get_event_loop()
-            return await loop.run_in_executor(None, get_demographic_distribution)
+            return await loop.run_in_executor(None, csv_get_demographic_distribution)
         
         data = await handler.execute_io_operation(
             "fetch_demographic_distribution",
@@ -221,7 +203,82 @@ async def get_demographic_distribution():
         logger.info("Demographic distribution fetched")
         return data
     except Exception as e:
-        logger.error(f"Error in get_demographic_distribution: {e}")
+        logger.error(f"Error in get_mobility_demographic_distribution: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============= STATE-SPECIFIC ANALYTICS ENDPOINT =============
+
+@app.get("/api/states/{state_name}")
+async def get_state_analytics(state_name: str):
+    """Get comprehensive analytics for a specific state"""
+    try:
+        handler = get_async_handler()
+        
+        async def fetch_state_data():
+            loop = asyncio.get_event_loop()
+            
+            # Get state-specific enrollments
+            state_enrollments = await loop.run_in_executor(
+                None, explorer_enrollment, state_name, None, None, None, 1, 1000
+            )
+            
+            # Get timeline for this state
+            state_timeline = await loop.run_in_executor(
+                None, csv_get_enrollment_timeline, 12, state_name
+            )
+            
+            # Get demographic data filtered by state
+            demographic_data = await loop.run_in_executor(None, csv_get_demographic_distribution)
+            
+            # Calculate state-specific metrics
+            state_rows = state_enrollments.get('rows', [])
+            total_enrollments = sum(
+                row.get('age_0_5', 0) + row.get('age_5_17', 0) + row.get('age_18_greater', 0)
+                for row in state_rows
+            )
+            
+            districts = list(set(row.get('district', 'Unknown') for row in state_rows))
+            pincodes = list(set(row.get('pincode', '000000') for row in state_rows if row.get('pincode')))
+            
+            # Age distribution for this state
+            age_distribution = {
+                'age_0_5': sum(row.get('age_0_5', 0) for row in state_rows),
+                'age_5_17': sum(row.get('age_5_17', 0) for row in state_rows),
+                'age_18_greater': sum(row.get('age_18_greater', 0) for row in state_rows),
+            }
+            
+            return {
+                'state': state_name,
+                'total_enrollments': total_enrollments,
+                'active_users': int(total_enrollments * 0.95),
+                'districts_covered': len(districts),
+                'districts': districts[:20],  # Top 20 districts
+                'pincodes_covered': len(pincodes),
+                'timeline': state_timeline,
+                'demographics': {
+                    'age_0_5': age_distribution['age_0_5'],
+                    'age_5_17': age_distribution['age_5_17'], 
+                    'age_18_greater': age_distribution['age_18_greater'],
+                    'total': total_enrollments
+                },
+                'coverage_ratio': min(100, (len(pincodes) / 1000) * 100),  # Rough coverage estimate
+                'data_quality': 'High' if total_enrollments > 100000 else 'Medium' if total_enrollments > 10000 else 'Low'
+            }
+        
+        data = await handler.execute_io_operation(
+            "fetch_state_analytics",
+            fetch_state_data,
+            use_cache=True,
+            cache_key=f"state_analytics_{state_name}",
+            retry=True
+        )
+        
+        logger.info(f"State analytics fetched for {state_name}: {data.get('total_enrollments', 0)} enrollments")
+        return data
+        
+    except Exception as e:
+        logger.error(f"Error fetching state analytics for {state_name}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -339,14 +396,44 @@ def get_explorer_enrollment(
     district: Optional[str] = None,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
+    search: Optional[str] = None,
+    sort: Optional[str] = None,
+    order: Optional[str] = Query('asc', regex="^(asc|desc)$"),
     page: int = Query(1, ge=1),
     limit: int = Query(100, ge=1, le=1000),
 ):
-    """Paginated enrollment aggregated rows (CSV-only)"""
+    """Paginated enrollment aggregated rows from all datasets (CSV-only)"""
     try:
-        res = explorer_enrollment(state, district, date_from, date_to, page, limit)
+        res = explorer_enrollment(
+            state=state, 
+            district=district, 
+            date_from=date_from, 
+            date_to=date_to, 
+            search=search,
+            sort=sort,
+            order=order,
+            page=page, 
+            limit=limit
+        )
         return res
     except Exception as e:
+        logger.error(f"Error in get_explorer_enrollment: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/explorer/states")
+def get_explorer_states():
+    """Get a distinct list of states from the enrollment data."""
+    try:
+        # This will leverage the index built by other functions
+        states = get_available_states()
+        if not states:
+            # If index is not built, build it by scanning
+            get_state_distribution(limit=50) # This will populate the index
+            states = get_available_states()
+        return states
+    except Exception as e:
+        logger.error(f"Error in get_explorer_states: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -356,7 +443,7 @@ def aggregated_enrollment_timeline(
 ):
     """Return monthly aggregated enrollment counts across all age buckets (CSV-only)"""
     try:
-        timeline = get_enrollment_timeline(months=months, state=state)
+        timeline = csv_get_enrollment_timeline(months=months, state=state)
         return {"timeline": timeline, "months": months}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -369,7 +456,7 @@ def aggregated_enrollment_timeline(
 def aggregated_state_distribution(limit: int = Query(20, ge=1, le=200)):
     """Return per-state aggregated enrollments (CSV-only)"""
     try:
-        data = get_state_distribution(limit=limit)
+        data = csv_get_state_distribution(limit=limit)
         return {"states": data, "total_states": len(data)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1374,7 +1461,7 @@ def get_state_metrics(state_name: str):
     """Get detailed metrics for a specific state"""
     try:
         # Get state distribution data
-        all_states = get_state_distribution(limit=1000)
+        all_states = csv_get_state_distribution(limit=1000)
         state_data = next((s for s in all_states if s['state'].lower() == state_name.lower()), None)
         
         if not state_data:
@@ -1385,7 +1472,7 @@ def get_state_metrics(state_name: str):
         state_demo = next((d for d in demo_data if d['state'].lower() == state_name.lower()), None)
         
         # Get enrollment timeline for the state
-        timeline = get_enrollment_timeline(months=12, state=state_name)
+        timeline = csv_get_enrollment_timeline(months=12, state=state_name)
         
         return {
             "state": state_name,
@@ -1423,7 +1510,7 @@ def compare_states(states: str = Query(...), metric: str = Query("total_enrollme
     """Compare multiple states across a specific metric"""
     try:
         state_list = [s.strip() for s in states.split(",")]
-        all_states = get_state_distribution(limit=1000)
+        all_states = csv_get_state_distribution(limit=1000)
         
         comparison_data = []
         for state in state_list:
@@ -1449,7 +1536,7 @@ def compare_states(states: str = Query(...), metric: str = Query("total_enrollme
 def get_states_ranking(metric: str = Query("total_enrollments"), limit: int = Query(20, ge=1, le=100)):
     """Get states ranked by a specific metric"""
     try:
-        all_states = get_state_distribution(limit=1000)
+        all_states = csv_get_state_distribution(limit=1000)
         
         # Sort by metric
         ranked = sorted(
